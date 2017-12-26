@@ -1,7 +1,7 @@
 "use strict"
 
 const express = require('express');
-const app 	  = new express();
+const app     = new express();
 const server  = require('http').Server(app);
 const io      = require('socket.io')(server);
 const router  = express.Router();
@@ -22,11 +22,11 @@ const SendSocketClient = require('./socketconfig');
 let log  = new Log('dubug'), state;
 // Sockets
 var i = 0;
-io.on('connection', socket=>{
-  setInterval(()=>{
+io.on('connection', socket=> {
+  setInterval(() => {
     socket.emit('now', Board_sensed);
   }, 200);
-  socket.on('led', (bool)=>{
+  socket.on('led', (bool) => {
       state = bool;
       console.log(bool +' '+i++);
       //Board_sensed.Led = bool;
@@ -38,16 +38,16 @@ io.on('connection', socket=>{
 Board_sensed.Led = state;
 
 // Callbacks Router.
-function login(req, res){
+function login(req, res) {
     res.render('Login');
     res.end();
 }
 
-function dashboard(req, res){
+function dashboard(req, res) {
     res.render('index.html');
 }
 
-function settings(req, res){
+function settings(req, res) {
     res.send('settings');
     res.end();
 }
@@ -61,7 +61,7 @@ app.get('/login', login);
 app.get('/settings', settings);
 app.get('/dashboard', dashboard);
 
-server.listen(port, ()=> {
+server.listen(port, () => {
 	console.log(`Servidor corriendo en el puerto ${ port }`.yellow);
 	// ScannerWifi();
 });
