@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title>Uniclaretiana ioT</title>
+      <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
+ <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jquerymobile/1.4.3/jquery.mobile.min.css" />
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquerymobile/1.4.3/jquery.mobile.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+</head>
+
+<body>
+  <div data-role="page">
+    <div data-role="header">
+      <h1>Domox</h1>
+    </div>
+
+    <div data-role="content">
+      <h3 id="heaterPhoto" class="ui-bar ui-bar-a ui-corner-all">Temperatura</h3>
+      <div class="ui-body ui-body-a ui-corner-all">
+        <div class="ui-grid-a toggle" id="currentTemp">
+          <legend class="ui-block-a">Temperatura °C</legend>
+          <div class="ui-block-b">
+            <span id="TempValue" class="ui-shadow ui-btn ui-corner-all ui-btn-inline">0</span>
+          </div>
+        </div>
+        <div class="ui-grid-a toggle" id="currentHum">
+          <legend class="ui-block-a">Temperatura °F</legend>
+          <div class="ui-block-b">
+
+            <span id="TempValue2" class="ui-shadow ui-btn ui-corner-all ui-btn-inline">0</span>
+          </div>
+        </div>
+      </div>
+      <h3 class="ui-bar ui-bar-a ui-corner-all">Luces</h3>
+      <div class="ui-body ui-body-a ui-corner-all">
+        <div class="ui-grid-a toggle" id="refreshButton">
+        <a id="refresh" class="ui-btn ui-btn-inline ui-icon-refresh ui-btn-icon-left">Refrescar</a>
+      </div>
+
+        <div class="ui-grid-a toggle" id="heaterOnOff">
+				<form >
+          <label for="flip-select-second">Bombillo</label>
+          <select id="thermostatOnOff" name="flip-select" data-role="flipswitch">
+          <option selected="">Off</option>
+          <option>On</option>
+        </select>
+      </form>
+    </div>
+
+<div id="targetTemp">
+<form>
+    <label for="slider-1">Nivel de agua %</label>
+    <input type="range" step="10" name="slider-1" id="targetAgua" data-highlight="true" min="0" max="255">
+</form>
+        </div>
+		<div class="ui-grid-a" id="minTemp">
+          <form>
+    <label for="slider-2">Temperatura máxima (°C)</label>
+    <input type="range" name="slider-2" id="minTempSlider" data-highlight="true" min="0" max="30" value="24">
+</form>
+        </div>
+      </div>
+    </div>
+
+    <div data-role="footer">
+      <h4>Domox Inc</h4>
+    </div>
+
+  </div>
+</body>
+<script>
+const ip = 'http://192.168.1.106:8080';
+const socket = io.connect(ip, {forceNew:true});
+let state = false;
+
+function dom($element){
+  return document.querySelector($element)
+}
+
+socket.on('now', (now)=>{
+  let data = now;
+
+  dom('#TempValue').innerText = data.Temperature.c  || 0;
+  dom('#TempValue2').innerText = parseInt(data.Temperature.f || 0);
+  dom('#targetAgua').value = parseInt(data.Potentiometer / 10)  || 0;
+    $('#targetAgua').attr('aria-valuenow', 199 )
+    $('#thermostatOnOff').change(()=>{
+        socket.emit('led', true)
+      });
+});
+
+
+
+</script>
+</html>
